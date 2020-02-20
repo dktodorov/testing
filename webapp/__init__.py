@@ -6,7 +6,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        return "Hello World"
+        return "Hello World1"
 
     @app.route('/intense')
     def intense():
