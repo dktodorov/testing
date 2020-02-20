@@ -1,39 +1,71 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-name: webapp
-labels:
-  app: webapp
+  name: webapp
 spec:
-strategy:
-  type: Recreate
-template:
-  metadata:
-    labels:
-      app: webapp
-      tier: webapp
-  spec:
-    containers:
-    - name: webapp
-      image: eu.gcr.io/homework-268814/webapp:latest
-      imagePullPolicy: Always
-      ports:
-      - containerPort: webapp
-        name: webapp
+  selector:
+    matchLabels:
+      run: webapp
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: eu.gcr.io/homework-268814/webapp:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: webapp
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-name: webapp
-labels:
-  app: webapp
+  name: webapp
+  labels:
+    run: webapp
 spec:
-ports:
-  - port: 5000
-    targetPort: 80
-selector:
-  app: webapp
-  tier: webapp
-type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 5000
+
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: webapp
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webapp
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+status:
+  observedGeneration: 1
+  currentReplicas: 2
+  desiredReplicas: 2
+  currentMetrics:
+  - type: Resource
+    resource:
+      name: cpu
+      current:
+        averageUtilization: 0
+        averageValue: 0
 
