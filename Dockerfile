@@ -2,7 +2,7 @@ FROM python:alpine
 LABEL maintainer="Daniel Todorov"
 COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
-COPY webapp /src/app/
+COPY webapp /src/app/webapp/
 WORKDIR /src/app/
 ENV FLASK_APP=webapp
 EXPOSE 5000
