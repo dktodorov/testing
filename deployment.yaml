@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+name: webapp
+labels:
+  app: webapp
+spec:
+strategy:
+  type: Recreate
+template:
+  metadata:
+    labels:
+      app: webapp
+      tier: webapp
+  spec:
+    containers:
+    - name: webapp
+      image: eu.gcr.io/homework-268814/webapp:latest
+      imagePullPolicy: Always
+      ports:
+      - containerPort: webapp
+        name: webapp
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+name: webapp
+labels:
+  app: webapp
+spec:
+ports:
+  - port: 5000
+    targetPort: 80
+selector:
+  app: webapp
+  tier: webapp
+type: LoadBalancer
+
