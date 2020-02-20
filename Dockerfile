@@ -1,6 +1,6 @@
 FROM python:alpine 
 LABEL maintainer="Daniel Todorov"
-COPY requirements.txt /src/
+COPY requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 COPY webapp /src/app/
 ENV FLASK_APP=webapp
