@@ -7,11 +7,6 @@ pipeline {
         registryCredential = 'Homework'
     }
     stages {
-        stage("Checkout") {
-            steps {
-                git branch: 'master', url: 'https://github.com/dktodorov/testing.git'
-            }
-        }
         stage("Test") {
             steps {
                 sh "/usr/local/bin/pytest tests/tests.py"
